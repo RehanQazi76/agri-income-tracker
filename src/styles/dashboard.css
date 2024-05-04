@@ -1,0 +1,44 @@
+.DateMessage{
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    
+}
+.col{
+    margin: 15px;
+}
+
+.parent{
+     display: flex;
+     flex-direction: row;
+     gap: 40px;
+     margin: 20px;
+     justify-content: space-between;
+
+}
+.graphsand_bal{
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex-basis: 600px;
+}
+.bal{
+    display: flex;
+    flex-direction: column;
+    gap :20px;
+}
+.Income_expense{
+    display: flex;
+    flex-direction: row;
+    gap: 15px;
+
+}
+.balence{
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+}
+.transactions{
+    /* align-items: flex-end; */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}

@@ -1,24 +1,36 @@
-import logo from './logo.svg';
-import './App.css';
-
-function App() {
+// App.js
+import React from 'react';
+import { createBrowserRouter, Outlet, Route, RouterProvider, Routes } from 'react-router-dom';
+import Navbar from './Components/Navbar';
+import Dashboard from './Pages/Dashboard';
+import Income from './Pages/Income';
+import Expenses from './Pages/Expenses';
+import Transactions from './Pages/transactions';
+import LoginForm from './Pages/login';
+import SignupPage from './Pages/SignUp';
+import {Toaster } from 'react-hot-toast';
+import { GlobalProvider } from './Context/globalContext';
+import Report from './Pages/reports';
+import { UserContextProvider } from './Context/userContext';
+function App(){
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+   
+    <GlobalProvider>
+    <Toaster position='bottom-right' toastOptions={{duraion:2000}} />
+    
+   <Routes>
+    <Route  path='/' element={<SignupPage/>} />
+    <Route  path='/income' element={<Income/>} />
+    <Route  path='/expenses' element={<Expenses/>} />
+    <Route  path='/transactions' element={<Transactions/>} />
+    <Route  path='/login' element={<LoginForm/>} />
+    <Route  path='/dashboard' element={<Dashboard/>} />
+    <Route  path='/reports' element={<Report/>} />
+   </Routes>
+   </GlobalProvider>
+     
+    </>
   );
 }
 
