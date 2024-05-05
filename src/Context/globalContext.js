@@ -4,7 +4,25 @@ import {toast} from 'react-hot-toast'
 
 const BASE_URL = "http://localhost:4000/api/v1/";
 
-
+const axiosInstance = axios.create({
+    baseURL: BASE_URL,
+  });
+  
+  // Axios interceptor to include the token in request headers
+  axiosInstance.interceptors.request.use(
+    (config) => {
+      const token = localStorage.getItem('authToken'); // Assuming the token is stored in localStorage
+     
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`; // Set authorization token
+      }
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error); // Handle error in request interceptor
+    }
+  );
+  
 const GlobalContext = React.createContext()
 
 export const GlobalProvider = ({children}) => {
@@ -12,12 +30,13 @@ export const GlobalProvider = ({children}) => {
     const [incomes, setIncomes] = useState([])
     const [expenses, setExpenses] = useState([])
     const [categories, setCategories] = useState([])
+    const [expenseCategories, setExpenseCategories] = useState([])
     const [error, setError] = useState(null)
 
     //calculate incomes
     const addIncome = async (income) => {
         try {
-             await axios.post(`${BASE_URL}add-income`, income);
+             await axiosInstance.post(`${BASE_URL}add-income`, income);
             getIncomes();
         } catch (error) {
             setError(error.response?.data?.message || "An error occurred while adding income.");
@@ -25,13 +44,13 @@ export const GlobalProvider = ({children}) => {
     }
 
     const getIncomes = async () => {
-        const response = await axios.get(`${BASE_URL}get-incomes`)
+        const response = await axiosInstance.get(`${BASE_URL}get-incomes`)
         setIncomes(response.data)
         // console.log(response.data)
     }
 
     const deleteIncome = async (id) => {
-        await axios.delete(`${BASE_URL}delete-income/${id}`)
+        await axiosInstance.delete(`${BASE_URL}delete-income/${id}`)
         getIncomes()
     }
 
@@ -49,20 +68,20 @@ export const GlobalProvider = ({children}) => {
  
 const addExpense = async (expense) => {
     try {
-       await axios.post(`${BASE_URL}add-expense`, expense);
+       await axiosInstance.post(`${BASE_URL}add-expense`, expense);
         getExpenses();
     } catch (error) {
         setError(error.response?.data?.message || "An error occurred while adding expense.");
     }
 }
     const getExpenses = async () => {
-        const response = await axios.get(`${BASE_URL}get-expenses`)
+        const response = await axiosInstance.get(`${BASE_URL}get-expenses`)
         setExpenses(response.data)
         // console.log(response.data)
     }
 
     const deleteExpense = async (id) => {
-     await axios.delete(`${BASE_URL}delete-expense/${id}`)
+     await axiosInstance.delete(`${BASE_URL}delete-expense/${id}`)
         getExpenses()
     }
 
@@ -96,7 +115,7 @@ const addExpense = async (expense) => {
     const addCategory = async(name)=>{
         try {
             console.log(name);
-            await axios.post(`${BASE_URL}add-category`,{name:name});
+            await axiosInstance.post(`${BASE_URL}add-category`,{name:name});
             getCategories();
             toast.success("Category added successfully");
         } catch (error) {
@@ -104,13 +123,27 @@ const addExpense = async (expense) => {
         }
     }
     const getCategories= async()=>{ 
-        const response = await axios.get(`${BASE_URL}get-category`);
+        const response = await axiosInstance.get(`${BASE_URL}get-category`);
         setCategories(response.data.category)
+    }
+    const addExpenseCategory = async(name)=>{
+        try {
+            console.log(name);
+            await axiosInstance.post(`${BASE_URL}add-expenseCategory`,{name:name});
+            getExpenseCategories();
+            toast.success("Category added successfully");
+        } catch (error) {
+            toast.error(error.response?.data?.message,"hhhh" || "An error occurred while adding category.");
+        }
+    }
+    const getExpenseCategories= async()=>{ 
+        const response = await axiosInstance.get(`${BASE_URL}get-expenseCategory`);
+        setExpenseCategories(response.data.category)
     }
 
     const registerUser = async(userInfo )=>{
         try {
-            const{data}= await axios.post(`${BASE_URL}register`, userInfo);
+            const{data}= await axiosInstance.post(`${BASE_URL}register`, userInfo);
             if(data.error){
                 toast.error(data.error);
                 return false;
@@ -123,21 +156,7 @@ const addExpense = async (expense) => {
             
         }
     }
-    const login = async(loginInfo)=>{
-        try {
-            const {data}= await  axios.post(`${BASE_URL}login`, loginInfo);
-            if(data.error){
-                toast.error(data.error);
-                return false;
-            }
-            else {
-                toast.success("login successful");
-                return true;
-            }
-        } catch (error) {
-            
-        }
-    }
+   
 
     return (
         <GlobalContext.Provider value={{
@@ -155,11 +174,14 @@ const addExpense = async (expense) => {
             transactionHistory,
             addCategory,
             getCategories,
+            addExpenseCategory,
+            getExpenseCategories,
             categories,
+            expenseCategories,
             error,
             setError,
             registerUser,
-            login
+            
         }}>
             {children}
         </GlobalContext.Provider>

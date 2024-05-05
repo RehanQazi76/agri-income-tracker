@@ -3,11 +3,12 @@ const cors= require("cors");
 const { registerUser, loginUser,getProfile } = require('../controllers/user');
 
 
-// router.use(
-//     cors({
-//         credentials:true,
-//         origin: 'http://localhost:4000'    
-// }))
+
+router.use(
+    cors({
+        credentials:true,
+        origin: 'http://localhost:3000'    
+}))
 
 
 

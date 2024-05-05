@@ -30,25 +30,34 @@ const SignupPage = () => {
    
 
     try {
-      const{data}= await axios.post("http://localhost:4000/api/v1/register", {
+      const response= await axios.post("http://localhost:4000/api/v1/register", {
         userName,
         email,
         password,
         
-      });
-      if(data.error){
-          toast.error(data.error);
-          return false;
+      });if (response.data && response.data.token) {
+        const { token } = response.data;
+
+        // Store the token in local storage or context
+        localStorage.setItem("authToken", token);
+        console.log(localStorage)
+
+        
+        navigate("/dashboard");
+
+        // Display a success notification
+        toast.success('Successfully signed in!');
+      } else {
+        throw new Error("Token not found in response.");
       }
-      else{
-          toast.success("user registered")
-          navigate('/dashboard')
-          return true;
-          
-      }
-  } catch (error) {
-      
-  }
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Error during sign-in");
+   
+    }
+
+    
+
+
     console.log('Signing up with:', email, userName, password); // Included username
     
   };
@@ -117,7 +126,7 @@ const SignupPage = () => {
 
   return (
     <div className="signup-page">
-      <h1 style={{padding:"20px"}}>Welcome to AgriTracker</h1>
+      <h1 style={{padding:"20px"}}>Lets get you Started!!</h1>
       <div className="signup-form">
         <h2>Sign Up</h2>
         <form onSubmit={handleFormSubmit}>
@@ -169,7 +178,7 @@ const SignupPage = () => {
             <label className="error-label">{confirmPasswordError}</label>
           </div>
           <br />
-          <Link className='link' to="/login" style={{textDecoration :"none"}}> Already have an account</Link>
+          
           <br/>
           <br/>
           <button type="submit" className="submitButton" style={{width:"350px", margin:"0 auto"}}>Submit</button>

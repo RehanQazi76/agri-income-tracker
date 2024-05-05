@@ -3,7 +3,7 @@ import '../styles/Formcomponent.css';
 import { useGlobalContext } from '../Context/globalContext';
 
 function FormComponent(props) {
-  const { addExpense, error, setError, addIncome, categories, getCategories,addCategory } = useGlobalContext();
+  const { addExpense, error, setError, addIncome,expenseCategories, categories, getCategories,addCategory, getExpenseCategories,addExpenseCategory } = useGlobalContext();
   const source = props.source;
   const [toggle, setToggle] = useState(true);
   const [formData, setFormData] = useState({
@@ -17,11 +17,10 @@ function FormComponent(props) {
   const [newCategoryFormData, setNewCategoryFormData] = useState({
     name: ''
   });
-
-  useEffect(() => {
+useEffect(() => {
     getCategories();
+    getExpenseCategories();
   }, []);
-
   const handleChange = (e) => {
     e.preventDefault();
     const { name, value } = e.target;
@@ -62,7 +61,7 @@ function FormComponent(props) {
     const { name } = newCategoryFormData;
     console.log(name);
     // Assuming you have a function addCategory to add new category
-    addCategory(name);
+    source==="income"? addCategory(name):addExpenseCategory(name);
     // Clear the form data
     setNewCategoryFormData({ name: '' });
   };
@@ -134,7 +133,7 @@ function FormComponent(props) {
     className="input"
   >
     <option value="">Select an option</option>
-    {categories.map((category)=>{
+    {(source==="income"?categories:expenseCategories).map((category)=>{
       return(<option key={category._id} value={category.name}>{category.name}</option>)
     })}
   </select>

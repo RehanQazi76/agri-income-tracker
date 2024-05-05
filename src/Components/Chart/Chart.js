@@ -75,6 +75,7 @@ const ChartStyled = styled.div`
     padding: 1rem;
     border-radius: 20px;
     color:#00246B;
+    width:500px;
     height: 100%;
 `;
 

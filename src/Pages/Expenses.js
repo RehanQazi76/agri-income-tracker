@@ -34,7 +34,7 @@ function formatDate(dateString) {
 
     React.useEffect(() => {
       getExpenses();
-    }, [expenses]);
+    }, []);
     return(
       <>
       <Navbar/>

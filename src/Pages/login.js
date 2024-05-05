@@ -1,30 +1,50 @@
 import React, { useState } from 'react';
 import { useGlobalContext } from '../Context/globalContext';
 import { Link, useNavigate } from 'react-router-dom';
-
+import axios from 'axios';
+import toast from 'react-hot-toast';
 const LoginForm = () => {
+  
   const navigate = useNavigate();
-  const {login}= useGlobalContext();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
 
-  const handleFormSubmit = (e) => {
+
+  const handleFormSubmit =async (e) => {
     e.preventDefault();
-    
+
     if (!email || !password) {
       alert('Please fill in both fields.');
       return;
     }
-    const result= login({
-      email,
-      password
-    });
-    if(result){
-      navigate('/dashboard')
-    }
 
+    try {
+      const response = await axios.post("http://localhost:4000/api/v1/login", {
+        email,
+        password,
+      });
+
+      // Ensure the response contains a token
+      console.log(response.data)
+      if (response.data ) {
+        const  token  = response.data;
+        console.log(token)
+        // Store the token in local storage or context
+        localStorage.setItem("authToken", token);
+        console.log(localStorage)
+        navigate("/dashboard");
+
+        // Display a success notification
+        toast.success('Successfully signed in!')
+      } else {
+        throw new Error("Token not found in response.");
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Error during sign-in");
+   
+    }
   };
 
   // CSS styles as template literals
@@ -33,7 +53,10 @@ const LoginForm = () => {
       background-color: black;
       padding: 20px;
     }
-
+    h1{
+      text-align: center;
+      font-size: 50px;
+    }
     .login-form {
       background-color: #CADCFC;
       padding: 20px;
@@ -74,10 +97,11 @@ const LoginForm = () => {
     }
   `;
 
-  return (
-    
+  return (<>
+    <h1 style={{padding:"20px"}}>Welcome to AgriTracker!!</h1>
       <div className="login-form">
           <style>{styles}</style> {/* Include CSS styles */}
+          
         <h2>Login</h2>
         <form onSubmit={handleFormSubmit}>
           <div className="input-container">
@@ -104,10 +128,15 @@ const LoginForm = () => {
             <label className="error-label">{passwordError}</label>
           </div>
           
-          <br />
           <button type="submit" className="submitButton" style={{width:"350px", margin:"0 auto"}}>Submit</button>
         </form>
+        <br />
+          <br />
+          <span style={{textDecoration :"none", margin:"18px", fontSize:"large"}}>Don't have an account?</span>
+        <Link  to="/signup" style={{textDecoration :"none", margin:"18px", fontSize:"large"}}>sign up</Link>
+          
       </div>
+      </>
   
   );
 };

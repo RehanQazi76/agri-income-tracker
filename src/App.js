@@ -11,25 +11,24 @@ import SignupPage from './Pages/SignUp';
 import {Toaster } from 'react-hot-toast';
 import { GlobalProvider } from './Context/globalContext';
 import Report from './Pages/reports';
-import { UserContextProvider } from './Context/userContext';
 function App(){
   return (
     <>
-   
+    
     <GlobalProvider>
     <Toaster position='bottom-right' toastOptions={{duraion:2000}} />
     
    <Routes>
-    <Route  path='/' element={<SignupPage/>} />
+    <Route  path='/signup' element={<SignupPage/>} />
     <Route  path='/income' element={<Income/>} />
     <Route  path='/expenses' element={<Expenses/>} />
     <Route  path='/transactions' element={<Transactions/>} />
-    <Route  path='/login' element={<LoginForm/>} />
+    <Route  path='/' element={<LoginForm/>} />
     <Route  path='/dashboard' element={<Dashboard/>} />
     <Route  path='/reports' element={<Report/>} />
    </Routes>
    </GlobalProvider>
-     
+
     </>
   );
 }

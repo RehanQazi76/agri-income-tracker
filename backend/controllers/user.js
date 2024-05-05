@@ -1,7 +1,13 @@
 const userSchema = require('../models/userModel');
 const { comparePassword,hashPassword}= require("../helper/auth");
 const jwt= require('jsonwebtoken');
-const cookieParser= require('cookie-parser')
+
+const express = require('express')
+const cors=require("cors")
+
+const app = express()
+app.use(cors)
+
 
 
 const registerUser= async(req,res)=>{
@@ -36,15 +42,14 @@ const registerUser= async(req,res)=>{
             password:hashedpass,
         });
         await user.save();
-        // create token
-        // const getuser= await userSchema.findOne({email});
-        // const token = jwt.sign({email:getuser.email, id:getuser._id,userName: getuser.userName},process.env.JWT_SECRET,{expiresIn:"24h"} )
-        // return (
-        //     token,
-        //     (res.json({
-        //     message:"user created successfully"
-        // })))
-
+        // create token 
+        const token = jwt.sign(
+            { id: user._id, username: user.username },
+            process.env.JWT_SECRET,
+            { expiresIn: '1h' }
+          );
+          res.json(token)
+   
     } catch (error) {
         console.log(error)
     }
@@ -66,12 +71,12 @@ const loginUser= async (req, res)=>{
         // check if match
         const match =await comparePassword(password, user.password)
         if (match) {
-            jwt.sign({ email: user.email, id: user._id, userName: user.userName }, process.env.JWT_SECRET, { expiresIn: "24h" }, (err, token) => {
-                if (err) {
-                    return res.status(500).json({ error: "Internal Server Error" });
-                }
-                res.cookie('token', token, { httpOnly: true, maxAge: 86400 }).json({ message: "Passwords match", user: { email: user.email, id: user._id, userName: user.userName } });
-            });
+            const token = jwt.sign(
+                { id: user._id, username: user.userName },
+                process.env.JWT_SECRET,
+                { expiresIn: '1h' }
+              );
+              res.json(token)
         } else {
             return res.status(400).json({ error: "Passwords do not match" });
         }
@@ -81,16 +86,20 @@ const loginUser= async (req, res)=>{
 }
 
 const getProfile= async(req, res)=>{
-const{token} =req.cookieParser;
-if(token){
-    jwt.verify(token, process.env.JWT_SECRET,{},(err,user)=>{
-        if(err)throw err;
-        res.json(user);
+const{token} =req.cookies;
+res.json()
 
-    })
+// if(token){
+//     jwt.verify(token, process.env.JWT_SECRET,{},(err,user)=>{
+//         if(err)throw err;
+//         res.json(user);
 
-}
-else res.json(null);
+//     })
+
+// }
+// else {
+    
+//     res.json(null);}
 }
 
 module.exports={registerUser, loginUser,getProfile}

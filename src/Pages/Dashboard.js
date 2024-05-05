@@ -1,5 +1,5 @@
 // Dashboard.js
-import React, { useEffect } from 'react';
+import React, { useEffect,useContext } from 'react';
 import ShowDate from '../Components/showDate';
 import "../styles/dashboard.css";
 import TransactionRow from '../Components/TransactionRow';
@@ -35,16 +35,19 @@ function DisplayTransaction(trans){
 function Dashboard(){
     // You can access TotalIncome, TotalExpense, TotalBal, ExpensesTransaction, IncomeTransaction as this.props in this component
     const {totalExpenses, totalIncome, totalBalance, getIncomes, getExpenses ,transactionHistory} = useGlobalContext()
+  
     useEffect(()=>{
       getIncomes();
       getExpenses();
     },[])
     const [...history] = transactionHistory();
     console.log("the history",history)
+    
     return (
       <>
       <Navbar/>
       <div>
+   
         <ShowDate/>
       </div>
       <div className='parent'>
